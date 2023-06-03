@@ -137,6 +137,57 @@ def find_year_by_publication_id(publication_id, ):
                 return row['Year']
     return None
 
+
+
+# Функция для получения значения Experience по AuthorID_TSU
+def getExp(author_id):
+    url = f'https://persona.tsu.ru/Home/UserProfile/{author_id}'
+    response = requests.get(url)
+    soup = BeautifulSoup(response.text, 'html.parser')
+    divs = soup.find_all('div')
+    for i, div in enumerate(divs):
+        if div.text.strip() == 'Общий стаж' and i + 1 < len(divs):
+            return divs[i + 1].text.strip()
+    return 0
+def getSubdiv(author_id):
+    url = f'https://persona.tsu.ru/Home/UserProfile/{author_id}'
+    response = requests.get(url)
+    soup = BeautifulSoup(response.text, 'html.parser')
+    spans = soup.find_all('span', itemprop='name')
+
+    if len(spans) >= 2:
+        return spans[1].text.strip()
+    else:
+        return None
+
+# Чтение исходной таблицы из CSV файла
+df = pd.read_csv('Data/AuthorID_NEW_AuthorID_TSU_PublicationsID.csv', delimiter=';')
+
+# Создание новой таблицы с необходимыми полями
+new_df = pd.DataFrame(columns=['AuthorID_NEW', 'AuthorID_TSU', 'Experience', 'Subdivision', 'PublicationsID'])
+
+# Итерация по исходной таблице и заполнение новой таблицы
+for index, row in df.iterrows():
+    author_id_new = row['AuthorID_NEW']
+    author_id_tsu = row['AuthorID_TSU']
+    publications_id = row['PublicationsID']
+    experience = getExp(author_id_tsu)
+    subdivision = getSubdiv(author_id_tsu)
+
+    new_row = {'AuthorID_NEW': author_id_new, 'AuthorID_TSU': author_id_tsu, 'Experience': experience,
+               'Subdivision': subdivision, 'PublicationsID': publications_id}
+    new_df = new_df._append(new_row, ignore_index=True)
+
+# Сохранение новой таблицы в CSV файл
+new_df.to_csv('AuthorID_NEW_AuthorID_TSU_Experience_Subdivision_PublicationsID.csv.csv', index=False, sep=';')
+
+
+
+
+
+
+
+
 # Соединил таблицы в одну
 # years_df = pd.read_csv('Data/Years_of_publication.csv')
 # publications_df = pd.read_csv('Data/Publication_ID.csv')
