@@ -139,47 +139,55 @@ def find_year_by_publication_id(publication_id, ):
 
 
 
-# Функция для получения значения Experience по AuthorID_TSU
-def getExp(author_id):
-    url = f'https://persona.tsu.ru/Home/UserProfile/{author_id}'
-    response = requests.get(url)
-    soup = BeautifulSoup(response.text, 'html.parser')
-    divs = soup.find_all('div')
-    for i, div in enumerate(divs):
-        if div.text.strip() == 'Общий стаж' and i + 1 < len(divs):
-            return divs[i + 1].text.strip()
-    return 0
-def getSubdiv(author_id):
-    url = f'https://persona.tsu.ru/Home/UserProfile/{author_id}'
-    response = requests.get(url)
-    soup = BeautifulSoup(response.text, 'html.parser')
-    spans = soup.find_all('span', itemprop='name')
 
-    if len(spans) >= 2:
-        return spans[1].text.strip()
-    else:
-        return None
-
-# Чтение исходной таблицы из CSV файла
-df = pd.read_csv('Data/AuthorID_NEW_AuthorID_TSU_PublicationsID.csv', delimiter=';')
-
-# Создание новой таблицы с необходимыми полями
-new_df = pd.DataFrame(columns=['AuthorID_NEW', 'AuthorID_TSU', 'Experience', 'Subdivision', 'PublicationsID'])
-
-# Итерация по исходной таблице и заполнение новой таблицы
-for index, row in df.iterrows():
-    author_id_new = row['AuthorID_NEW']
-    author_id_tsu = row['AuthorID_TSU']
-    publications_id = row['PublicationsID']
-    experience = getExp(author_id_tsu)
-    subdivision = getSubdiv(author_id_tsu)
-
-    new_row = {'AuthorID_NEW': author_id_new, 'AuthorID_TSU': author_id_tsu, 'Experience': experience,
-               'Subdivision': subdivision, 'PublicationsID': publications_id}
-    new_df = new_df._append(new_row, ignore_index=True)
-
-# Сохранение новой таблицы в CSV файл
-new_df.to_csv('AuthorID_NEW_AuthorID_TSU_Experience_Subdivision_PublicationsID.csv.csv', index=False, sep=';')
+#######################################################
+#                                                     #
+#                                                     #
+# Добавление полей стажа и факультета                 #
+#                                                     #
+#                                                     #
+#######################################################
+# # Функция для получения значения Experience по AuthorID_TSU
+# def getExp(author_id):
+#     url = f'https://persona.tsu.ru/Home/UserProfile/{author_id}'
+#     response = requests.get(url)
+#     soup = BeautifulSoup(response.text, 'html.parser')
+#     divs = soup.find_all('div')
+#     for i, div in enumerate(divs):
+#         if div.text.strip() == 'Общий стаж' and i + 1 < len(divs):
+#             return divs[i + 1].text.strip()
+#     return 0
+# def getSubdiv(author_id):
+#     url = f'https://persona.tsu.ru/Home/UserProfile/{author_id}'
+#     response = requests.get(url)
+#     soup = BeautifulSoup(response.text, 'html.parser')
+#     spans = soup.find_all('span', itemprop='name')
+#
+#     if len(spans) >= 2:
+#         return spans[1].text.strip()
+#     else:
+#         return None
+#
+# # Чтение исходной таблицы из CSV файла
+# df = pd.read_csv('Data/AuthorID_NEW_AuthorID_TSU_PublicationsID.csv', delimiter=';')
+#
+# # Создание новой таблицы с необходимыми полями
+# new_df = pd.DataFrame(columns=['AuthorID_NEW', 'AuthorID_TSU', 'Experience', 'Subdivision', 'PublicationsID'])
+#
+# # Итерация по исходной таблице и заполнение новой таблицы
+# for index, row in df.iterrows():
+#     author_id_new = row['AuthorID_NEW']
+#     author_id_tsu = row['AuthorID_TSU']
+#     publications_id = row['PublicationsID']
+#     experience = getExp(author_id_tsu)
+#     subdivision = getSubdiv(author_id_tsu)
+#
+#     new_row = {'AuthorID_NEW': author_id_new, 'AuthorID_TSU': author_id_tsu, 'Experience': experience,
+#                'Subdivision': subdivision, 'PublicationsID': publications_id}
+#     new_df = new_df._append(new_row, ignore_index=True)
+#
+# # Сохранение новой таблицы в CSV файл
+# new_df.to_csv('AuthorID_NEW_AuthorID_TSU_Experience_Subdivision_PublicationsID.csv.csv', index=False, sep=';')
 
 
 
@@ -199,6 +207,8 @@ new_df.to_csv('AuthorID_NEW_AuthorID_TSU_Experience_Subdivision_PublicationsID.c
 #
 # # Save the new table as a CSV file
 # new_table_df.to_csv('new_table.csv', index=False)
+
+
 
 
 # Создание таблицы с автором и его публикациями. Этот блок кода не полный. Данные приходилось немного корректровать. (Удалить несуществующие ссылки, лишние запятые и тд.
@@ -226,6 +236,8 @@ new_df.to_csv('AuthorID_NEW_AuthorID_TSU_Experience_Subdivision_PublicationsID.c
 #                 writer.writerow(data_row)
 #                 file.close()
 #             i += 1
+
+
 
 
 # Поиск дат публикаций
@@ -269,9 +281,9 @@ new_df.to_csv('AuthorID_NEW_AuthorID_TSU_Experience_Subdivision_PublicationsID.c
 #                                                     #
 # Разделение на 3 таблицы по датам публикации         #
 #                                                     #
-# до 2010 | 2010-2017 | 2018-2023                     #
+# до 2016 | 2016-2019 | 2020-2023                     #
 #######################################################
-
+#
 # with open('Data/AuthorID_NEW_AuthorID_TSU_PublicationsID.csv', 'r', newline='') as input_file:
 #     csv_reader = csv.reader(input_file, delimiter=';')
 #     next(csv_reader)  # Пропускаем заголовок
@@ -281,34 +293,34 @@ new_df.to_csv('AuthorID_NEW_AuthorID_TSU_Experience_Subdivision_PublicationsID.c
 #         publications.extend(row[2].split(','))
 #         for publication in publications:
 #             try:
-#                 if int(find_year_by_publication_id(publication)) < 2010:
-#                     with open('before_2010.csv', 'a') as before_2010_file:
-#                         writer = csv.writer(before_2010_file)
+#                 if int(find_year_by_publication_id(publication)) < 2016:
+#                     with open('before_2016.csv', 'a') as before_2016_file:
+#                         writer = csv.writer(before_2016_file)
 #                         write_row = row[0] + ';' + publication
 #                         # print(write_row)
 #                         writer.writerow(write_row)
-#                         before_2010_file.close()
+#                         before_2016_file.close()
 #
-#                 if int(find_year_by_publication_id(publication)) >= 2010 and int(
-#                         find_year_by_publication_id(publication)) <= 2017:
-#                     with open('2005-2015.csv', 'a') as _2010_2017_file:
-#                         writer = csv.writer(_2010_2017_file)
+#                 if int(find_year_by_publication_id(publication)) >= 2016 and int(
+#                         find_year_by_publication_id(publication)) <= 2019:
+#                     with open('2016-2019.csv', 'a') as _2017_2019_file:
+#                         writer = csv.writer(_2017_2019_file)
 #                         write_row = row[0] + ';' + publication
 #                         # print(write_row)
 #                         writer.writerow(write_row)
-#                         _2010_2017_file.close()
+#                         _2017_2019_file.close()
 #
-#                 if int(find_year_by_publication_id(publication)) > 2017:
-#                     with open('after_2015.csv', 'a') as after_2017_file:
-#                         writer = csv.writer(after_2017_file)
+#                 if int(find_year_by_publication_id(publication)) > 2019:
+#                     with open('after_2021.csv', 'a') as after_2021_file:
+#                         writer = csv.writer(after_2021_file)
 #                         write_row = row[0] + ';' + publication
 #                         # print(write_row)
 #                         writer.writerow(write_row)
-#                         after_2017_file.close()
+#                         after_2021_file.close()
 #             except Exception:
-#                 with open('Data/there_have_been_problems.txt', 'a') as exception_file:
-#                     txt_string = f'Publication ID: {publication}\n {row}'
-#                     exception_file.write(txt_string)
-#                     exception_file.close()
-#                 # print(f'Publication ID: {publication}\n {row}')
+#                 # with open('Data/there_have_been_problems.txt', 'a') as exception_file:
+#                 #     txt_string = f'Publication ID: {publication}\n {row}'
+#                 #     exception_file.write(txt_string)
+#                 #     exception_file.close()
+#                 print(f'Publication ID: {publication}\n {row}')
 #             # print(publication)
