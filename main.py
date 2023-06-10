@@ -3,6 +3,7 @@ from bs4 import BeautifulSoup
 import re
 import csv
 import pandas as pd
+from scipy.sparse import coo_matrix, save_npz
 
 def save_get_request_to_file(url, filename):
     response = requests.get(url)
@@ -88,7 +89,7 @@ def build_adjacency_matrix_from_csv(csv_file_path, mtx_file_path):
 
         for row in reader:
             author_id = int(row[0])
-            publications = list(map(int, row[1].strip().split(', ')))
+            publications = list(map(int, row[1].strip().split(',')))
 
             adjacency_row = [author_id, publications]
             adjacency_matrix.append(adjacency_row)
@@ -136,9 +137,6 @@ def find_year_by_publication_id(publication_id, ):
             if row['Publication_ID'] == str(publication_id):
                 return row['Year']
     return None
-
-
-
 
 #######################################################
 #                                                     #
