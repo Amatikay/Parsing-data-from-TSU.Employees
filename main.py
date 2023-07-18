@@ -407,3 +407,26 @@ def find_year_by_publication_id(publication_id, ):
 # with open(matrix_after_2019_path, 'w') as file:
 #     for row in adjacency_matrix_after_2019:
 #         file.write(' '.join(map(str, row)) + '\n')
+
+############################################################################
+####### Сохраниение инфорации о стаже на моменты срезов ####################
+############################################################################
+
+# def create_dat_file(year, data):
+#     filename = str(year) + ".dat"
+#     with open(filename, "w") as file:
+#         for row in data:
+#             author_id_new = row["AuthorID_NEW"]
+#             experience = int(row["Experience"])
+#             exp_by_year = experience - (2023 - year)
+#             file.write(f"{exp_by_year}\n")
+#
+# # Чтение CSV файла
+# with open("Data/AuthorID_NEW_AuthorID_TSU_Experience_Subdivision_PublicationsID.csv", "r") as file:
+#     csv_reader = csv.DictReader(file, delimiter=";")
+#     data = list(csv_reader)
+#
+# # Создание .dat файлов
+# create_dat_file(2016, data)
+# create_dat_file(2019, data)
+# create_dat_file(2023, data)
