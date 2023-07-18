@@ -5,6 +5,8 @@ import csv
 import pandas as pd
 from scipy.sparse import coo_matrix, save_npz
 
+
+
 def save_get_request_to_file(url, filename):
     response = requests.get(url)
 
@@ -137,6 +139,11 @@ def find_year_by_publication_id(publication_id, ):
             if row['Publication_ID'] == str(publication_id):
                 return row['Year']
     return None
+
+
+
+
+
 
 #######################################################
 #                                                     #
@@ -322,3 +329,81 @@ def find_year_by_publication_id(publication_id, ):
 #                 #     exception_file.close()
 #                 print(f'Publication ID: {publication}\n {row}')
 #             # print(publication)
+
+
+
+
+###########################################################
+
+####### Разбиение на 2 файла с ОДИНАКОВОЙ размерностью ####
+
+###########################################################
+
+# file1_path = 'Data/PublicationID_Year.csv'
+# data1 = {}
+# with open(file1_path, 'r') as file1:
+#     reader = csv.DictReader(file1, delimiter=';')
+#     for row in reader:
+#         publication_id = int(row['Publication_ID'])
+#         year = int(row['Year'])
+#         data1[publication_id] = year
+#
+# file2_path = 'Data/AuthorID_NEW_AuthorID_TSU_PublicationsID.csv'
+# data2 = {}
+# with open(file2_path, 'r') as file2:
+#     reader = csv.DictReader(file2, delimiter=';')
+#     for row in reader:
+#         author_id_new = int(row['AuthorID_NEW'])
+#         publication_ids = row['PublicationsID'].split(',')
+#         publication_ids = [int(publication_id) for publication_id in publication_ids]
+#         data2[author_id_new] = publication_ids
+# # Создание матрицы смежности для периода до 2016 года
+# adjacency_matrix_before_2016 = [[0] * len(data2) for _ in range(len(data2))]
+#
+# for author_id_new, publication_ids in data2.items():
+#     for publication_id in publication_ids:
+#         if publication_id in data1 and data1[publication_id] < 2016:
+#             for other_author_id_new, other_publication_ids in data2.items():
+#                 if other_author_id_new != author_id_new and publication_id in other_publication_ids:
+#                     adjacency_matrix_before_2016[author_id_new-1][other_author_id_new-1] = 1
+#                     adjacency_matrix_before_2016[other_author_id_new-1][author_id_new-1] = 1
+#
+# # Создание матрицы смежности для периода 2016-2019 годы
+# adjacency_matrix_2016_2019 = [[0] * len(data2) for _ in range(len(data2))]
+#
+# for author_id_new, publication_ids in data2.items():
+#     for publication_id in publication_ids:
+#         if publication_id in data1 and 2016 <= data1[publication_id] <= 2019:
+#             for other_author_id_new, other_publication_ids in data2.items():
+#                 if other_author_id_new != author_id_new and publication_id in other_publication_ids:
+#                     adjacency_matrix_2016_2019[author_id_new-1][other_author_id_new-1] = 1
+#                     adjacency_matrix_2016_2019[other_author_id_new-1][author_id_new-1] = 1
+#
+# # Создание матрицы смежности для периода после 2019 года
+# adjacency_matrix_after_2019 = [[0] * len(data2) for _ in range(len(data2))]
+#
+# for author_id_new, publication_ids in data2.items():
+#     for publication_id in publication_ids:
+#         if publication_id in data1 and data1[publication_id] > 2019:
+#             for other_author_id_new, other_publication_ids in data2.items():
+#                 if other_author_id_new != author_id_new and publication_id in other_publication_ids:
+#                     adjacency_matrix_after_2019[author_id_new-1][other_author_id_new-1] = 1
+#                     adjacency_matrix_after_2019[other_author_id_new-1][author_id_new-1] = 1
+#
+# # Сохранение матрицы смежности для периода до 2016 года в файл .dat
+# matrix_before_2016_path = 'путь_к_файлу_матрицы_до_2016.dat'
+# with open(matrix_before_2016_path, 'w') as file:
+#     for row in adjacency_matrix_before_2016:
+#         file.write(' '.join(map(str, row)) + '\n')
+#
+# # Сохранение матрицы смежности для периода 2016-2019 годы в файл .dat
+# matrix_2016_2019_path = 'путь_к_файлу_матрицы_2016_2019.dat'
+# with open(matrix_2016_2019_path, 'w') as file:
+#     for row in adjacency_matrix_2016_2019:
+#         file.write(' '.join(map(str, row)) + '\n')
+#
+# # Сохранение матрицы смежности для периода после 2019 года в файл .dat
+# matrix_after_2019_path = 'путь_к_файлу_матрицы_после_2019.dat'
+# with open(matrix_after_2019_path, 'w') as file:
+#     for row in adjacency_matrix_after_2019:
+#         file.write(' '.join(map(str, row)) + '\n')
